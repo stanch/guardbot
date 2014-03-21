@@ -7,9 +7,6 @@ import java.util.UUID
 import scala.collection.JavaConversions.asScalaSet
 import akka.actor._
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothSocket
-import scala.concurrent.Future
-import scala.concurrent.duration._
 
 object SpinalCord {
 	case class Move(t: Double, r: Double)
@@ -18,16 +15,15 @@ object SpinalCord {
 
 /* This acts as a bridge between the brain and the body */
 class SpinalCord extends Actor {
-	import context._
 	import SpinalCord._
 
 	lazy val (nxtSocket, dataOut, dataIn) = {
 		// try to connect to the body
-		BluetoothAdapter.getDefaultAdapter().getBondedDevices() find { _.getName() == "R3D3" } match {
+		BluetoothAdapter.getDefaultAdapter.getBondedDevices.find(_.getName == "R3D3") match {
 			case Some(d) ⇒
 				val sock = d.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
 				sock.connect()
-				(sock, new DataOutputStream(sock.getOutputStream()), new DataInputStream(sock.getInputStream()))
+				(sock, new DataOutputStream(sock.getOutputStream), new DataInputStream(sock.getInputStream))
 			case None ⇒ throw new IOException("Could not find my body!")
 		}
 	}
@@ -51,7 +47,7 @@ class SpinalCord extends Actor {
 			}
 	}
 
-	override def postStop {
+	override def postStop() = {
 		dataOut.writeInt(2)
 		dataOut.close()
 		dataIn.close()

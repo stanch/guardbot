@@ -3,29 +3,30 @@ package pt.ul.fc.di.nexusnxt
 import android.view.SurfaceView
 import scala.concurrent.duration._
 import akka.actor._
-import android.content.Context
-import org.scaloid.common._
-import scala.math.{signum, abs}
-import android.util.Log
+import scala.math.abs
 import scala.util.Random
-import android.speech.tts.TextToSpeech
+import macroid.AppContext
 
 object Brain {
 	sealed trait State
 	case object Wandering extends State
 	case object Chasing extends State
+  case object Sleeping extends State
+
+  case class WakeUp(surface: Option[SurfaceView])
+  case object Sleep
 }
 
 /* A state machine responsible for the robot’s behavior */
-class Brain(retina: SurfaceView)(implicit ctx: Context) extends Actor with FSM[Brain.State, Unit] {
+class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] {
 	import context._
 	import Brain._
 	import Vision._
 	import Mouth._
 
-	val vision = actorOf(Props(new Vision(retina)))
-	val spine = actorOf(Props[SpinalCord])
-	val mouth = actorOf(Props(new Mouth))
+	lazy val vision = actorOf(Props(new Vision))
+	lazy val spine = actorOf(Props(new SpinalCord))
+	lazy val mouth = actorOf(Props(new Mouth))
 	
 	var lastWord = System.currentTimeMillis
 	def say(word: String) = {
@@ -35,37 +36,37 @@ class Brain(retina: SurfaceView)(implicit ctx: Context) extends Actor with FSM[B
 		}
 	}
 
-	startWith(Wandering, Unit)
+  def catchPhrase = List(
+    "Looking for someone...",
+    "Come on, where are you guys?",
+    "Just show me your face!"
+  )(Random.nextInt(3))
+
+	startWith(Sleeping, Unit)
+
+  when(Sleeping) {
+    case Event(WakeUp(surface), _) ⇒
+      vision ! OpenEyes(surface)
+      goto(Wandering)
+    case _ ⇒ stay()
+  }
 
 	/* Wandering around and looking for people */
 	when(Wandering, stateTimeout = 1 second) {
-		case Event(Face(_, _), _) ⇒
+		case Event(Face(_), _) ⇒
 			goto(Chasing)
+    case Event(Sleep, _) ⇒
+      vision ! CloseEyes
+      goto(Sleeping)
 		case Event(FSM.StateTimeout, _) ⇒
 			spine ! SpinalCord.Move(0, 10)
-			say(List(
-				"""Looking for someone...""",
-				"""Come on, where are you guys?""",
-				"""Just show me your face!"""
-			)(Random.nextInt(3)))
-			stay
+			say(catchPhrase)
+			stay()
 	}
 
 	/* Chasing the face */
 	when(Chasing, stateTimeout = 3 seconds) {
-		case Event(Face(face, Some("nick")), _) ⇒
-			// greet the creator
-			say("Oh, hi, Nick!")
-			stay
-		case Event(Face(face, name), _) ⇒
-			// sometimes say a random catch-phrase
-			name foreach { n ⇒
-				say(List(
-					s"""Gonna shoot you, $n!""",
-					s"""$n, are you feeling lucky today?""",
-					s"""Beware, $n, I am coming!"""
-				)(Random.nextInt(3)))
-			}
+		case Event(Face(face), _) ⇒
 			if (face.rect.exactCenterX > 600 && abs(face.rect.exactCenterY) < 200) {
 				// shoot
 				mouth ! Say("Fire!!!")
@@ -77,11 +78,14 @@ class Brain(retina: SurfaceView)(implicit ctx: Context) extends Actor with FSM[B
 					-70 * (face.rect.exactCenterX - 700) / 600 + 10,
 					70 * face.rect.exactCenterY / 1000
 				)
-				stay
+				stay()
 			}
+    case Event(Sleep, _) ⇒
+      vision ! CloseEyes
+      goto(Sleeping)
 		case Event(FSM.StateTimeout, _) ⇒
 			goto(Wandering)
 	}
 
-	initialize
+	initialize()
 }
