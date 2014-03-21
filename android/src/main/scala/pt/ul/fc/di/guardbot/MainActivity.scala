@@ -1,4 +1,4 @@
-package pt.ul.fc.di.nexusnxt
+package pt.ul.fc.di.guardbot
 
 import akka.actor._
 import android.app.Activity
@@ -17,11 +17,11 @@ class MainActivity extends Activity with Contexts[Activity] {
 
 	var surface = slot[SurfaceView]
 
-  val stoppedView = l[LinearLayout](
+  lazy val stoppedView = l[LinearLayout](
     w[Button] <~ text("Start") <~ On.click(wakeUp)
   )
 
-  val startedView = l[VerticalLinearLayout](
+  lazy val startedView = l[VerticalLinearLayout](
     w[Button] <~ text("Stop") <~ On.click(sleep),
     w[SurfaceView] <~ wire(surface)
   )

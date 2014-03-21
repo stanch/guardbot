@@ -1,4 +1,4 @@
-package pt.ul.fc.di.nexusnxt
+package pt.ul.fc.di.guardbot
 
 import android.speech.tts.TextToSpeech
 import akka.actor.Actor

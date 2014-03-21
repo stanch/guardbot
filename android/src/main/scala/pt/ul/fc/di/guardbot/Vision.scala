@@ -1,4 +1,4 @@
-package pt.ul.fc.di.nexusnxt
+package pt.ul.fc.di.guardbot
 
 import android.view.SurfaceView
 import akka.actor._

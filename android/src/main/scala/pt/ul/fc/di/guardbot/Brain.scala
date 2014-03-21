@@ -1,4 +1,4 @@
-package pt.ul.fc.di.nexusnxt
+package pt.ul.fc.di.guardbot
 
 import android.view.SurfaceView
 import scala.concurrent.duration._
@@ -21,17 +21,15 @@ object Brain {
 class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] {
 	import context._
 	import Brain._
-	import Vision._
-	import Mouth._
 
-	lazy val vision = actorOf(Props(new Vision))
+  lazy val vision = actorOf(Props(new Vision))
 	lazy val spine = actorOf(Props(new SpinalCord))
 	lazy val mouth = actorOf(Props(new Mouth))
 	
 	var lastWord = System.currentTimeMillis
 	def say(word: String) = {
 		if (System.currentTimeMillis - lastWord > 10000) {
-			mouth ! Say(word)
+			mouth ! Mouth.Say(word)
 			lastWord = System.currentTimeMillis
 		}
 	}
@@ -46,17 +44,17 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
 
   when(Sleeping) {
     case Event(WakeUp(surface), _) ⇒
-      vision ! OpenEyes(surface)
+      vision ! Vision.OpenEyes(surface)
       goto(Wandering)
     case _ ⇒ stay()
   }
 
 	/* Wandering around and looking for people */
 	when(Wandering, stateTimeout = 1 second) {
-		case Event(Face(_), _) ⇒
+		case Event(Vision.Face(_), _) ⇒
 			goto(Chasing)
     case Event(Sleep, _) ⇒
-      vision ! CloseEyes
+      vision ! Vision.CloseEyes
       goto(Sleeping)
 		case Event(FSM.StateTimeout, _) ⇒
 			spine ! SpinalCord.Move(0, 10)
@@ -66,10 +64,10 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
 
 	/* Chasing the face */
 	when(Chasing, stateTimeout = 3 seconds) {
-		case Event(Face(face), _) ⇒
+		case Event(Vision.Face(face), _) ⇒
 			if (face.rect.exactCenterX > 600 && abs(face.rect.exactCenterY) < 200) {
 				// shoot
-				mouth ! Say("Fire!!!")
+				mouth ! Mouth.Say("Fire!!!")
 				spine ! SpinalCord.Shoot
 				goto(Wandering)
 			} else {
@@ -81,7 +79,7 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
 				stay()
 			}
     case Event(Sleep, _) ⇒
-      vision ! CloseEyes
+      vision ! Vision.CloseEyes
       goto(Sleeping)
 		case Event(FSM.StateTimeout, _) ⇒
 			goto(Wandering)

@@ -1,4 +1,4 @@
-package pt.ul.fc.di.nexusnxt
+package pt.ul.fc.di.guardbot
 
 import java.io.DataInputStream
 import java.io.DataOutputStream
