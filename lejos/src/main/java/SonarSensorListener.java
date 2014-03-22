@@ -5,8 +5,8 @@ import lejos.nxt.UltrasonicSensor;
 abstract class SonarSensorListener extends Thread {
 	protected UltrasonicSensor sensor;
 	Queue<ControlThread.Reflex> queue;
-	
-	static final int distanceThreshold = 12;
+
+    static final int distanceThreshold = 12;
 	
 	public SonarSensorListener(SensorPort port, Queue<ControlThread.Reflex> queue) {
 		this.queue = queue;

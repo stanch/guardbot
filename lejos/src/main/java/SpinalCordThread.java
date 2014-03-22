@@ -12,12 +12,12 @@ import lejos.nxt.comm.NXTConnection;
 class SpinalCordThread extends Thread {
 	Queue<ControlThread.BrainWave> queue;
 	public volatile Queue<Integer> outputQueue;
-	BTConnection connection;
+    BTConnection connection;
 	DataInputStream dataIn;
 	DataOutputStream dataOut;
 	
 	enum Command {
-		MOVE, SHOOT, DIE;
+		MOVE, SHOOT, DIE
 	}
 
 	public SpinalCordThread(Queue<ControlThread.BrainWave> queue, Queue<Integer> outputQueue) {

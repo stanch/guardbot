@@ -78,15 +78,18 @@ public class ControlThread extends Thread {
 				if (!brainWaveQueue.empty()) {
 					BrainWave msg = (BrainWave)brainWaveQueue.pop();
 					if (!msg.separate) {
+                        if (msg.linear != 0) {
+                            pilot.setTravelSpeed(Math.abs(msg.linear));
+                        } else {
+                            pilot.setRotateSpeed(Math.abs(msg.angular));
+                        }
 						if (msg.linear > 0) {
-							pilot.setTravelSpeed(msg.linear);
 							if (msg.angular != 0) {
 								pilot.steer(msg.angular);
 							} else {
 								pilot.forward();
 							}
 						} else if (msg.linear < 0) {
-							pilot.setTravelSpeed(-msg.linear);
 							if (msg.angular != 0) {
 								pilot.steerBackward(-msg.angular);
 							} else {
@@ -94,27 +97,23 @@ public class ControlThread extends Thread {
 							}
 						} else {
 							if (msg.angular > 0) {
-								pilot.setRotateSpeed(msg.angular);
 								pilot.rotateLeft();
 							} else {
-								pilot.setRotateSpeed(-msg.angular);
 								pilot.rotateRight();
 							}
 						}
 					} else {
+                        left.setSpeed(Math.abs(msg.linear.floatValue()));
 						if (msg.linear > 0) {
 							left.forward();
-							left.setSpeed(msg.linear.floatValue());
 						} else {
 							left.backward();
-							left.setSpeed(-msg.linear.floatValue());
 						}
+                        right.setSpeed(Math.abs(msg.angular.floatValue()));
 						if (msg.angular > 0) {
 							right.forward();
-							right.setSpeed(msg.angular.floatValue());
 						} else {
 							right.backward();
-							right.setSpeed(-msg.angular.floatValue());
 						}
 					}
 				}

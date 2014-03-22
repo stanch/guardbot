@@ -9,6 +9,5 @@ public class FrontSonarSensorListener extends SonarSensorListener {
 	@Override
 	protected void reflex() {
 		queue.push(new ControlThread.Reflex(-10.0, 15.0));
-
 	}
 }
