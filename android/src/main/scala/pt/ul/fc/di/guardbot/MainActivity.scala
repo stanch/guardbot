@@ -15,10 +15,10 @@ import com.typesafe.config.ConfigFactory
 
 class MainActivity extends Activity with Contexts[Activity] {
   lazy val classLoader = getApplication.getClassLoader
-	lazy val actorSystem = ActorSystem("ActorSystem", ConfigFactory.load(classLoader), classLoader)
-  lazy val brain = actorSystem.actorOf(Props(new Brain), name="brain")
+  lazy val actorSystem = ActorSystem("ActorSystem", ConfigFactory.load(classLoader), classLoader)
+  lazy val brain = actorSystem.actorOf(Props(new Brain), name = "brain")
 
-	var surface = slot[SurfaceView]
+  var surface = slot[SurfaceView]
 
   lazy val stoppedView = l[LinearLayout](
     w[Button] <~ text("Start") <~ On.click(wakeUp)
@@ -28,19 +28,19 @@ class MainActivity extends Activity with Contexts[Activity] {
     w[Button] <~ text("Stop") <~ On.click(sleep),
     w[SurfaceView] <~ wire(surface)
   )
-	
-	override def onCreate(savedInstanceState: Bundle) = {
+
+  override def onCreate(savedInstanceState: Bundle) = {
     super.onCreate(savedInstanceState)
     setContentView(getUi(stoppedView))
   }
-	
-	lazy val wakeUp: Ui[Unit] = Ui {
-		setContentView(getUi(startedView))
-		brain ! Brain.WakeUp(surface)
-	}
-	
-	lazy val sleep: Ui[Unit] = Ui {
+
+  lazy val wakeUp: Ui[Unit] = Ui {
+    setContentView(getUi(startedView))
+    brain ! Brain.WakeUp(surface)
+  }
+
+  lazy val sleep: Ui[Unit] = Ui {
     brain ! Brain.Sleep
     setContentView(getUi(stoppedView))
-	}
+  }
 }

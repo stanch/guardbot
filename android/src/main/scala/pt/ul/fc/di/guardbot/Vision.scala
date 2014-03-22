@@ -9,34 +9,35 @@ import macroid.AppContext
 object Vision {
   case class OpenEyes(retina: Option[SurfaceView])
   case object CloseEyes
-	case class Face(face: Camera.Face)
+  case class Face(face: Camera.Face)
 }
 
 /* An actor that monitors the camera */
 class Vision(implicit ctx: AppContext) extends Actor {
-	import context._
-	import Vision._
+  import context._
+  import Vision._
 
-	var eye: Option[Camera] = None
+  var eye: Option[Camera] = None
 
   lazy val brain = actorSelection("../../brain")
 
-	def receive = {
-		case OpenEyes(retina) ⇒
+  def receive = {
+    case OpenEyes(retina) ⇒
       eye = Option(Camera.open(1))
-      (eye zip retina) foreach { case (e, r) ⇒
-        val params = e.getParameters
-        params.setZoom(params.getMaxZoom / 2)
-        e.setParameters(params)
-        e.setPreviewDisplay(r.getHolder)
-        e.setDisplayOrientation(90)
-        e.startPreview()
-        e.setFaceDetectionListener(new FaceDetectionListener {
-          def onFaceDetection(faces: Array[Camera.Face], camera: Camera) = if (faces.length > 0) {
-            brain ! Face(faces(0))
-          }
-        })
-        e.startFaceDetection()
+      (eye zip retina) foreach {
+        case (e, r) ⇒
+          val params = e.getParameters
+          params.setZoom(params.getMaxZoom / 2)
+          e.setParameters(params)
+          e.setPreviewDisplay(r.getHolder)
+          e.setDisplayOrientation(90)
+          e.startPreview()
+          e.setFaceDetectionListener(new FaceDetectionListener {
+            def onFaceDetection(faces: Array[Camera.Face], camera: Camera) = if (faces.length > 0) {
+              brain ! Face(faces(0))
+            }
+          })
+          e.startFaceDetection()
       }
 
     case CloseEyes ⇒
@@ -46,5 +47,5 @@ class Vision(implicit ctx: AppContext) extends Actor {
         e.release()
       }
       eye = None
-	}
+  }
 }
