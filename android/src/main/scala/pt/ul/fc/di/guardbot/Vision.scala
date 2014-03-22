@@ -7,7 +7,7 @@ import android.hardware.Camera.FaceDetectionListener
 import macroid.AppContext
 
 object Vision {
-  case class OpenEyes(surface: Option[SurfaceView])
+  case class OpenEyes(retina: Option[SurfaceView])
   case object CloseEyes
 	case class Face(face: Camera.Face)
 }
@@ -17,15 +17,13 @@ class Vision(implicit ctx: AppContext) extends Actor {
 	import context._
 	import Vision._
 
-  var retina: Option[SurfaceView] = None
 	var eye: Option[Camera] = None
 
   lazy val brain = actorSelection("../../brain")
 
 	def receive = {
-		case OpenEyes(surface) ⇒
-      retina = surface
-      eye = Some(Camera.open(1))
+		case OpenEyes(retina) ⇒
+      eye = Option(Camera.open(1))
       (eye zip retina) foreach { case (e, r) ⇒
         val params = e.getParameters
         params.setZoom(params.getMaxZoom / 2)
@@ -48,6 +46,5 @@ class Vision(implicit ctx: AppContext) extends Actor {
         e.release()
       }
       eye = None
-      retina = None
 	}
 }

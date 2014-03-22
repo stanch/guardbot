@@ -10,9 +10,12 @@ import macroid.Contexts
 import macroid.FullDsl._
 import macroid.util.Ui
 import macroid.contrib.Layouts.VerticalLinearLayout
+import android.util.Log
+import com.typesafe.config.ConfigFactory
 
 class MainActivity extends Activity with Contexts[Activity] {
-	lazy val actorSystem = ActorSystem("ActorSystem")
+  lazy val classLoader = getApplication.getClassLoader
+	lazy val actorSystem = ActorSystem("ActorSystem", ConfigFactory.load(classLoader), classLoader)
   lazy val brain = actorSystem.actorOf(Props(new Brain), name="brain")
 
 	var surface = slot[SurfaceView]
@@ -37,7 +40,7 @@ class MainActivity extends Activity with Contexts[Activity] {
 	}
 	
 	lazy val sleep: Ui[Unit] = Ui {
-    setContentView(getUi(stoppedView))
     brain ! Brain.Sleep
+    setContentView(getUi(stoppedView))
 	}
 }

@@ -13,7 +13,7 @@ object Brain {
 	case object Chasing extends State
   case object Sleeping extends State
 
-  case class WakeUp(surface: Option[SurfaceView])
+  case class WakeUp(retina: Option[SurfaceView])
   case object Sleep
 }
 
@@ -43,8 +43,8 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
 	startWith(Sleeping, Unit)
 
   when(Sleeping) {
-    case Event(WakeUp(surface), _) ⇒
-      vision ! Vision.OpenEyes(surface)
+    case Event(WakeUp(retina), _) ⇒
+      vision ! Vision.OpenEyes(retina)
       goto(Wandering)
     case _ ⇒ stay()
   }

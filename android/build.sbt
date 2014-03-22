@@ -15,11 +15,11 @@ resolvers ++= Seq(
 
 scalacOptions in (Compile, compile) ++= Seq(
   "-P:wartremover:cp:" + (dependencyClasspath in Compile).value.files.map(_.toURL.toString).find(_.contains("org.macroid/macroid_")).get,
-  "-P:wartremover:traverser:macroid.warts.Ui"
+  "-P:wartremover:traverser:macroid.warts.CheckUi"
 )
 
 libraryDependencies ++= Seq(
-  "org.macroid" %% "macroid" % "2.0.0-20140313",
+  "org.macroid" %% "macroid" % "2.0.0-20140322",
   "com.typesafe.akka" %% "akka-actor" % "2.2.3",
   compilerPlugin("org.brianmckenna" %% "wartremover" % "0.7")
 )
