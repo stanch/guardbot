@@ -2,6 +2,8 @@
 
 A simple robot that looks around, chases faces and shoots.
 
+---
+
 ### Instructions
 
 #### Prerequisites
@@ -58,8 +60,14 @@ We used tracked chassis, some collision detection sensors and a cannon or two. A
   
 #### Hacking
 
+You can run `sbt gen-idea` in both folders to create an Intellij IDEA environment.
 
+The Android part is a zoo of [Akka](http://akka.io) actors, of which [Brain](https://github.com/stanch/guardbot/blob/master/android/src/main/scala/pt/ul/fc/di/guardbot/Brain.scala) is the main one. [Spinal cord](https://github.com/stanch/guardbot/blob/master/android/src/main/scala/pt/ul/fc/di/guardbot/SpinalCord.scala) is responsible for Bluetooth communication.
+
+The LeJOS part uses several message queues to handle both “brain waves” and reflexes. The sensor ports need to be set in [Main.java](https://github.com/stanch/guardbot/blob/master/lejos/src/main/java/Main.java). Control commands are received in [SpinalCordThread.java](https://github.com/stanch/guardbot/blob/master/lejos/src/main/java/SpinalCordThread.java). The actual control of the robot is performed in [ControlThread.java](https://github.com/stanch/guardbot/blob/master/lejos/src/main/java/ControlThread.java).
+
+---
 
 ### Credits
 
-Built and programmed by *Nuno Marques* and [*Nick*](http://github.com/stanch) in 2013 and yet again in 2014.
+Built and programmed by *Nuno Marques* and [*Nick*](http://github.com/stanch) in 2013 and yet again in 2014 with support from the University of Lisbon.
