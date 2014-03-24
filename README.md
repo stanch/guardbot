@@ -14,13 +14,13 @@ A simple robot that looks around, chases faces and shoots.
 
 #### Build one!
 
-*Guardbot, make II (2014)*
+*GuardBot, make II (2014)*
 
-![Guardbot, make II](pics/make%20II%20-%201%20small.jpg)
+![GuardBot, make II](pics/make%20II%20-%201%20small.jpg)
 
-*Guardbot, make I (2013)*
+*GuardBot, make I (2013)*
 
-![Guardbot, make I](pics/make%20I%20-%201%20small.jpg)
+![GuardBot, make I](pics/make%20I%20-%201%20small.jpg)
 
 We used tracked chassis, some collision detection sensors and a cannon or two. A couple of additional pictures can be found inside the [pics directory](https://github.com/stanch/guardbot/tree/master/pics).
 
