@@ -1,4 +1,4 @@
-### Guardbot
+### GuardBot
 
 A simple robot that looks around, chases faces and shoots.
 
