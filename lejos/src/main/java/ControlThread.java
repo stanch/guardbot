@@ -31,9 +31,9 @@ public class ControlThread extends Thread {
 	public volatile Queue<Reflex> reflexQueue = new Queue<Reflex>();
 	public volatile Queue<BrainWave> brainWaveQueue = new Queue<BrainWave>();
 	Queue<Integer> outputQueue;
-	DifferentialPilot pilot = new DifferentialPilot(30, 120, Motor.A, Motor.B, true);
+	DifferentialPilot pilot = new DifferentialPilot(30, 120, Motor.A, Motor.C, true);
 	NXTRegulatedMotor right = Motor.A;
-	NXTRegulatedMotor left = Motor.B;
+	NXTRegulatedMotor left = Motor.C;
 	boolean alive = true;
 
 	@Override

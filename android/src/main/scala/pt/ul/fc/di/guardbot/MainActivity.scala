@@ -3,14 +3,12 @@ package pt.ul.fc.di.guardbot
 import akka.actor._
 import android.app.Activity
 import android.os.Bundle
-import android.view.SurfaceView
-import android.widget.Button
-import android.widget.LinearLayout
+import android.view.{ Gravity, SurfaceView }
+import android.widget.{ FrameLayout, Button, LinearLayout }
 import macroid.Contexts
 import macroid.FullDsl._
 import macroid.util.Ui
 import macroid.contrib.Layouts.VerticalLinearLayout
-import android.util.Log
 import com.typesafe.config.ConfigFactory
 
 class MainActivity extends Activity with Contexts[Activity] {
@@ -20,8 +18,8 @@ class MainActivity extends Activity with Contexts[Activity] {
 
   var surface = slot[SurfaceView]
 
-  lazy val stoppedView = l[LinearLayout](
-    w[Button] <~ text("Start") <~ On.click(wakeUp)
+  lazy val stoppedView = l[FrameLayout](
+    w[Button] <~ text("Start") <~ On.click(wakeUp) <~ lp[FrameLayout](100 dp, 50 dp, Gravity.CENTER)
   )
 
   lazy val startedView = l[VerticalLinearLayout](

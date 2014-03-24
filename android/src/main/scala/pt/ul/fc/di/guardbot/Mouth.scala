@@ -1,7 +1,7 @@
 package pt.ul.fc.di.guardbot
 
 import android.speech.tts.TextToSpeech
-import akka.actor.Actor
+import akka.actor.{ Stash, Actor }
 import java.util.Locale
 import macroid.AppContext
 
@@ -10,7 +10,9 @@ object Mouth {
 }
 
 /* An actor that speaks */
-class Mouth(implicit ctx: AppContext) extends Actor {
+class Mouth(implicit ctx: AppContext) extends Actor with Stash {
+  import Mouth._
+
   var lips: Option[TextToSpeech] = None
 
   val tts: TextToSpeech = new TextToSpeech(ctx.get, new TextToSpeech.OnInitListener {
@@ -18,10 +20,16 @@ class Mouth(implicit ctx: AppContext) extends Actor {
       tts.setLanguage(Locale.US)
       tts.speak("I am ready for great adventures", TextToSpeech.QUEUE_FLUSH, null)
       lips = Some(tts)
+      unstashAll()
+      context.become(teethBrushed)
     }
   })
 
+  def teethBrushed: Receive = {
+    case Say(text) ⇒ lips.foreach(_.speak(text, TextToSpeech.QUEUE_FLUSH, null))
+  }
+
   override def receive = {
-    case Mouth.Say(text) ⇒ lips.foreach(_.speak(text, TextToSpeech.QUEUE_FLUSH, null))
+    case msg ⇒ stash()
   }
 }

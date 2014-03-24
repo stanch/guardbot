@@ -12,7 +12,7 @@ public class Main {
 		//new RearTouchSensorListener(SensorPort.S1, control.reflexQueue).start();
 		//new FrontTouchSensorListener(SensorPort.S4, control.reflexQueue).start();
 		new RearSonarSensorListener(SensorPort.S2, control.reflexQueue).start();
-		new FrontSonarSensorListener(SensorPort.S3, control.reflexQueue).start();
+		new FrontSonarSensorListener(SensorPort.S1, control.reflexQueue).start();
 
 		/* start working! */
 		control.start();

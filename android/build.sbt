@@ -37,10 +37,11 @@ proguardOptions in Android ++= Seq(
   "-keep class akka.dispatch.UnboundedMessageQueueSemantics { *; }",
   "-keep class akka.dispatch.UnboundedDequeBasedMessageQueueSemantics { *; }",
   "-keep class akka.dispatch.DequeBasedMessageQueueSemantics { *; }",
+  "-keep class akka.dispatch.UnboundedDequeBasedMailbox { *; }",
   "-keep class akka.actor.LocalActorRefProvider$Guardian { *; }",
   "-keep class akka.actor.LocalActorRefProvider$SystemGuardian { *; }",
   "-keep class akka.dispatch.UnboundedMailbox { *; }",
   "-keep class akka.actor.DefaultSupervisorStrategy { *; }",
-  "-keep class org.macroid.akkafragments.AkkaAndroidLogger { *; }",
+  "-keep class pt.ul.fc.di.guardbot.AkkaAndroidLogger { *; }",
   "-keep class akka.event.Logging$LogExt { *; }"
 )

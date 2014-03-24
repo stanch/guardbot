@@ -44,7 +44,10 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
 
   when(Sleeping) {
     case Event(WakeUp(retina), _) ⇒
+      mouth ! Mouth.Say("I am alive!")
+      spine ! SpinalCord.AttachBody
       vision ! Vision.OpenEyes(retina)
+      spine ! SpinalCord.Shoot
       goto(Wandering)
     case _ ⇒ stay()
   }
@@ -55,6 +58,7 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
       goto(Chasing)
     case Event(Sleep, _) ⇒
       vision ! Vision.CloseEyes
+      spine ! SpinalCord.DetachBody
       goto(Sleeping)
     case Event(FSM.StateTimeout, _) ⇒
       spine ! SpinalCord.Move(0, 10)
@@ -80,6 +84,7 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
       }
     case Event(Sleep, _) ⇒
       vision ! Vision.CloseEyes
+      spine ! SpinalCord.DetachBody
       goto(Sleeping)
     case Event(FSM.StateTimeout, _) ⇒
       goto(Wandering)

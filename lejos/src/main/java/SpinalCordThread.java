@@ -50,8 +50,8 @@ class SpinalCordThread extends Thread {
 						queue.push(new ControlThread.BrainWave(dataIn.readInt()==1, dataIn.readDouble(), dataIn.readDouble()));
 						break;
 					} case SHOOT: {
-						Motor.C.rotate(-20); // rotates to shoot the gun
-						Motor.C.rotate(20); // goes back to charge position
+						Motor.B.rotate(-20); // rotates to shoot the gun
+						Motor.B.rotate(20); // goes back to charge position
 						break;
 					} case DIE: {
 						Sound.buzz();
