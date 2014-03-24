@@ -23,7 +23,7 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
   import Brain._
 
   lazy val vision = actorOf(Props(new Vision))
-  lazy val spine = actorOf(Props(new SpinalCord))
+  lazy val spine = actorOf(Props(new SpinalCord), "spine")
   lazy val mouth = actorOf(Props(new Mouth))
 
   var lastWord = System.currentTimeMillis
@@ -47,7 +47,6 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
       mouth ! Mouth.Say("I am alive!")
       spine ! SpinalCord.AttachBody
       vision ! Vision.OpenEyes(retina)
-      spine ! SpinalCord.Shoot
       goto(Wandering)
     case _ ⇒ stay()
   }
@@ -78,7 +77,7 @@ class Brain(implicit ctx: AppContext) extends Actor with FSM[Brain.State, Unit] 
         // calculate movement speed
         spine ! SpinalCord.Move(
           -70 * (face.rect.exactCenterX - 700) / 600 + 10,
-          70 * face.rect.exactCenterY / 1000
+          -70 * face.rect.exactCenterY / 1000
         )
         stay()
       }

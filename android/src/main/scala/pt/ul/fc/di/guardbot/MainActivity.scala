@@ -24,6 +24,9 @@ class MainActivity extends Activity with Contexts[Activity] {
 
   lazy val startedView = l[VerticalLinearLayout](
     w[Button] <~ text("Stop") <~ On.click(sleep),
+    w[Button] <~ text("Fire") <~ On.click(Ui {
+      actorSystem.actorSelection("/user/brain/spine") ! SpinalCord.Shoot
+    }),
     w[SurfaceView] <~ wire(surface)
   )
 
