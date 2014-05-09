@@ -6,7 +6,7 @@ platformTarget in Android := "android-18"
 
 name := "guardbot-android"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -14,14 +14,16 @@ resolvers ++= Seq(
 )
 
 scalacOptions in (Compile, compile) ++= Seq(
-  "-P:wartremover:cp:" + (dependencyClasspath in Compile).value.files.map(_.toURL.toString).find(_.contains("org.macroid/macroid_")).get,
+  "-P:wartremover:cp:" + (dependencyClasspath in Compile).value
+    .files.map(_.toURL.toString)
+    .find(_.contains("org.macroid/macroid_")).get,
   "-P:wartremover:traverser:macroid.warts.CheckUi"
 )
 
 libraryDependencies ++= Seq(
-  "org.macroid" %% "macroid" % "2.0.0-20140322",
+  "org.macroid" %% "macroid" % "2.0.0-M1",
   "com.typesafe.akka" %% "akka-actor" % "2.2.3",
-  compilerPlugin("org.brianmckenna" %% "wartremover" % "0.7")
+  compilerPlugin("org.brianmckenna" %% "wartremover" % "0.10")
 )
 
 proguardScala in Android := true
